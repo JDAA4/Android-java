@@ -1,7 +1,8 @@
 package com.example.act6;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log; // Importar la clase Log
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,17 +15,14 @@ import java.util.HashMap;
 
 public class DivisasActivity extends AppCompatActivity {
 
-    private static final String TAG = "DivisasActivity"; // Etiqueta para los logs
+    private static final String TAG = "DivisasActivity";
     private EditText editTextValor;
     private Spinner spinnerMonedaOrigen, spinnerMonedaDestino;
     private TextView textViewResultado, textViewNombreMonedaOrigen, textViewNombreMonedaDestino;
-    private Button btnConvertir;
+    private Button btnConvertir, btnRegresar;
 
     // Arrays con códigos y nombres de monedas
     private String[] codigosMonedas = {"EUR", "USD", "JPY", "BGN", "CZK", "DKK", "GBP", "HUF", "PLN", "RON", "SEK", "CHF", "ISK", "NOK", "HRK", "RUB", "TRY", "AUD", "BRL", "CAD", "CNY", "HKD", "IDR", "ILS", "INR", "KRW", "MXN", "MYR", "NZD", "PHP", "SGD", "THB", "ZAR"};
-    private String[] nombresMonedas = {"Euro", "Dólar Estadounidense", "Yen Japonés", "Lev Búlgaro", "Corona Checa", "Corona Danesa", "Libra Esterlina", "Florín Húngaro", "Zloty Polaco", "Leu Rumano", "Corona Sueca", "Franco Suizo", "Corona Islandesa", "Corona Noruega", "Kuna Croata", "Rublo Ruso", "Lira Turca", "Dólar Australiano", "Real Brasileño", "Dólar Canadiense", "Yuan Chino", "Dólar Hongkonés", "Rupia Indonesia", "Nuevo Shekel Israelí", "Rupia India", "Won Surcoreano", "Peso Mexicano", "Ringgit Malasio", "Dólar Neozelandés", "Peso Filipino", "Dólar de Singapur", "Baht Tailandés", "Rand Sudafricano"};
-
-    private HashMap<String, Float> tasaDeCambio = new HashMap<>(); // Map para almacenar tasas de cambio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +37,7 @@ public class DivisasActivity extends AppCompatActivity {
         textViewNombreMonedaOrigen = findViewById(R.id.textViewNombreMonedaOrigen);
         textViewNombreMonedaDestino = findViewById(R.id.textViewNombreMonedaDestino);
         btnConvertir = findViewById(R.id.btnConvertir);
+        btnRegresar = findViewById(R.id.btnRegresar);  // Nuevo botón
 
         // Llenar los spinners con los códigos de monedas
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, codigosMonedas);
@@ -46,63 +45,52 @@ public class DivisasActivity extends AppCompatActivity {
         spinnerMonedaOrigen.setAdapter(adapter);
         spinnerMonedaDestino.setAdapter(adapter);
 
-        // Cambiar nombre de moneda cuando se seleccione en el spinner
-        spinnerMonedaOrigen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                textViewNombreMonedaOrigen.setText(nombresMonedas[position]);
-                Log.d(TAG, "Moneda de origen seleccionada: " + codigosMonedas[position]);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        spinnerMonedaDestino.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                textViewNombreMonedaDestino.setText(nombresMonedas[position]);
-                Log.d(TAG, "Moneda de destino seleccionada: " + codigosMonedas[position]);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        // Cargar tasas de cambio desde la API
-        obtenerTasasDeCambio();
-
         // Acción al presionar el botón "Convertir"
         btnConvertir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                convertirDivisa();
+                String monedaOrigen = spinnerMonedaOrigen.getSelectedItem().toString();
+                obtenerTasasDeCambio(monedaOrigen);  // Llamar a la API con la moneda de origen seleccionada
+            }
+        });
+
+        // Acción al presionar el botón "Regresar"
+        btnRegresar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DivisasActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();  // Cierra esta actividad para que no quede en el historial
             }
         });
     }
 
     // Método para obtener tasas de cambio desde la API
-    private void obtenerTasasDeCambio() {
+    private void obtenerTasasDeCambio(String monedaOrigen) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://www.floatrates.com/")
+                .baseUrl("https://v6.exchangerate-api.com/v6/10a18377c174c005ee31e837/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        FloatRatesService service = retrofit.create(FloatRatesService.class);
-        Call<HashMap<String, ExchangeRate>> call = service.getRates();
+        ExchangeRateService service = retrofit.create(ExchangeRateService.class);
+        Call<ExchangeRateResponse> call = service.getRates(monedaOrigen);
 
-        call.enqueue(new Callback<HashMap<String, ExchangeRate>>() {
+        call.enqueue(new Callback<ExchangeRateResponse>() {
             @Override
-            public void onResponse(Call<HashMap<String, ExchangeRate>> call, Response<HashMap<String, ExchangeRate>> response) {
+            public void onResponse(Call<ExchangeRateResponse> call, Response<ExchangeRateResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    HashMap<String, ExchangeRate> rates = response.body();
+                    ExchangeRateResponse rates = response.body();
 
-                    // Guardar tasas de cambio en el HashMap
-                    for (String codigo : codigosMonedas) {
-                        if (rates.containsKey(codigo.toLowerCase())) {
-                            tasaDeCambio.put(codigo, rates.get(codigo.toLowerCase()).getRate());
-                            Log.d(TAG, "Tasa de cambio para " + codigo + ": " + rates.get(codigo.toLowerCase()).getRate());
-                        }
+                    // Obtener la tasa de la moneda de destino seleccionada
+                    String monedaDestino = spinnerMonedaDestino.getSelectedItem().toString();
+                    Float tasaDestino = rates.getConversionRates().get(monedaDestino);
+
+                    if (tasaDestino != null) {
+                        Log.d(TAG, "Tasa de cambio recibida: " + tasaDestino);
+                        convertirDivisa(tasaDestino);  // Pasar la tasa al método de conversión
+                    } else {
+                        textViewResultado.setText("Tasa de cambio no disponible para " + monedaDestino);
+                        Log.e(TAG, "Tasa de cambio no disponible para " + monedaDestino);
                     }
                 } else {
                     Log.e(TAG, "Error en la respuesta: " + response.message());
@@ -110,15 +98,15 @@ public class DivisasActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<HashMap<String, ExchangeRate>> call, Throwable t) {
+            public void onFailure(Call<ExchangeRateResponse> call, Throwable t) {
                 textViewResultado.setText("Error al cargar tasas de cambio.");
                 Log.e(TAG, "Error al cargar tasas de cambio: " + t.getMessage());
             }
         });
     }
 
-    // Método para convertir divisa
-    private void convertirDivisa() {
+    // Método para convertir divisa usando la tasa de cambio obtenida
+    private void convertirDivisa(float tasaDestino) {
         if (editTextValor.getText().toString().isEmpty()) {
             textViewResultado.setText("Por favor, ingrese un valor.");
             Log.d(TAG, "Valor de entrada vacío.");
@@ -126,52 +114,25 @@ public class DivisasActivity extends AppCompatActivity {
         }
 
         float valor = Float.parseFloat(editTextValor.getText().toString());
-        String monedaOrigen = spinnerMonedaOrigen.getSelectedItem().toString();
-        String monedaDestino = spinnerMonedaDestino.getSelectedItem().toString();
 
-        Log.d(TAG, "Convertir " + valor + " desde " + monedaOrigen + " a " + monedaDestino);
-
-        // Verificar si tenemos las tasas de cambio
-        if (tasaDeCambio.containsKey(monedaOrigen) && tasaDeCambio.containsKey(monedaDestino)) {
-            float tasaOrigen = tasaDeCambio.get(monedaOrigen);
-            float tasaDestino = tasaDeCambio.get(monedaDestino);
-            if (!tasaDeCambio.containsKey("MXN")) {
-                Log.e(TAG, "La tasa para MXN no está disponible.");
-            }
-
-
-            // Convertir de origen a destino
-            float resultado = valor * (tasaDestino / tasaOrigen);
-            textViewResultado.setText("Resultado: " + resultado);
-            Log.d(TAG, "Resultado de conversión: " + resultado);
-        } else {
-            textViewResultado.setText("Tasas de cambio no disponibles.");
-            Log.e(TAG, "Tasas de cambio no disponibles para " + monedaOrigen + " o " + monedaDestino);
-        }
+        // Realizar la conversión
+        float resultado = valor * tasaDestino;
+        textViewResultado.setText("Resultado: " + resultado);
+        Log.d(TAG, "Resultado de conversión: " + resultado);
     }
 
     // Interfaz Retrofit para la API
-    public interface FloatRatesService {
-        @retrofit2.http.GET("daily/mxn.json")
-        Call<HashMap<String, ExchangeRate>> getRates();
+    public interface ExchangeRateService {
+        @retrofit2.http.GET("latest/{monedaOrigen}")
+        Call<ExchangeRateResponse> getRates(@retrofit2.http.Path("monedaOrigen") String monedaOrigen);
     }
 
-    // Clase ExchangeRate para el modelo de datos
-    public class ExchangeRate {
-        private String code;
-        private String name;
-        private float rate;
+    // Modelo de respuesta para la API
+    public class ExchangeRateResponse {
+        private HashMap<String, Float> conversion_rates;
 
-        public String getCode() {
-            return code;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public float getRate() {
-            return rate;
+        public HashMap<String, Float> getConversionRates() {
+            return conversion_rates;
         }
     }
 }

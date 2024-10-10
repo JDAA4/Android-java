@@ -79,4 +79,13 @@
         android:textSize="18sp"
         android:layout_gravity="center_horizontal"
         android:paddingTop="16dp"/>
+    <Button
+        android:id="@+id/btnRegresar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Regresar al convertidor de bits"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        />
+
 </LinearLayout>
