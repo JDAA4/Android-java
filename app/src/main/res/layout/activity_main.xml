@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="32dp"
+    android:paddingBottom="16dp"
+    tools:context=".MainActivity">
+
+   <EditText
+       android:id="@+id/campoid"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="id" />
+
+   <EditText
+       android:id="@+id/nombre"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/campoid"
+       android:layout_marginTop="16dp"
+       android:hint="nombre" />
+
+   <EditText
+       android:id="@+id/telefono"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/nombre"
+       android:layout_marginTop="16dp"
+       android:hint="Telefono" />
+
+   <LinearLayout
+       android:id="@+id/grupo1"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/telefono"
+       android:layout_marginTop="16dp">
+
+      <Button
+          android:id="@+id/insertar1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Insertar 1" />
+
+      <Button
+          android:id="@+id/insertar2"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Insertar 2" />
+   </LinearLayout>
+
+   <LinearLayout
+       android:id="@+id/grupo2"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/grupo1"
+       android:layout_marginTop="16dp">
+
+      <Button
+          android:id="@+id/buscar1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Buscar 1" />
+
+      <Button
+          android:id="@+id/buscar2"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Buscar 2" />
+   </LinearLayout>
+
+   <LinearLayout
+       android:id="@+id/grupo3"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/grupo2"
+       android:layout_marginTop="16dp">
+
+      <Button
+          android:id="@+id/editar"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Editar" />
+
+      <Button
+          android:id="@+id/eliminar"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Borrar" />
+   </LinearLayout>
+
+   <Button
+       android:id="@+id/ver"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/grupo3"
+       android:layout_marginTop="16dp"
+       android:text="Ver" />
+</RelativeLayout>
