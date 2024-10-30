@@ -31,12 +31,49 @@
        android:layout_marginTop="16dp"
        android:hint="Telefono" />
 
+   <EditText
+       android:id="@+id/primerapellido"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="Primer Apellido"
+       android:layout_below="@+id/telefono"/>
+
+   <EditText
+       android:id="@+id/edad"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="Edad"
+       android:inputType="number"
+       android:layout_below="@+id/primerapellido"/>
+
+   <EditText
+       android:id="@+id/sexo"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="Sexo"
+       android:layout_below="@+id/edad"/>
+
+   <EditText
+       android:id="@+id/fecha_nacimiento"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="Fecha de Nacimiento"
+       android:layout_below="@+id/sexo"/>
+
+   <EditText
+       android:id="@+id/estatura"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="Estatura"
+       android:inputType="numberDecimal"
+       android:layout_below="@+id/fecha_nacimiento"/>
+
    <LinearLayout
        android:id="@+id/grupo1"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:layout_below="@+id/telefono"
-       android:layout_marginTop="16dp">
+       android:layout_below="@+id/fecha_nacimiento"
+       android:layout_marginTop="40dp">
 
       <Button
           android:id="@+id/insertar1"
@@ -51,6 +88,11 @@
           android:layout_height="wrap_content"
           android:layout_weight="1"
           android:text="Insertar 2" />
+      <Button
+          android:id="@+id/buscar_por_primer_apellido"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Buscar por primer apellido" />
    </LinearLayout>
 
    <LinearLayout
@@ -73,6 +115,11 @@
           android:layout_height="wrap_content"
           android:layout_weight="1"
           android:text="Buscar 2" />
+      <Button
+          android:id="@+id/buscar_por_edad"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Buscar por edad" />
    </LinearLayout>
 
    <LinearLayout
@@ -95,6 +142,11 @@
           android:layout_height="wrap_content"
           android:layout_weight="1"
           android:text="Borrar" />
+      <Button
+          android:id="@+id/buscar_por_estatura"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Buscar por estatura"/>
    </LinearLayout>
 
    <Button
@@ -104,4 +156,10 @@
        android:layout_below="@+id/grupo3"
        android:layout_marginTop="16dp"
        android:text="Ver" />
+   <Button
+       android:id="@+id/ver_lista_ordenada"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/ver"
+       android:text="Ver lista ordenada por Nombre" />
 </RelativeLayout>

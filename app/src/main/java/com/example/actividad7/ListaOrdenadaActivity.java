@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,38 +17,41 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 
-public class ListaActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-
-    ListView lista;
-    ArrayList<String> listausuarios;
-    ArrayList<Usuarios> datosusuario;
+public class ListaOrdenadaActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    ListView listView;
+    ArrayList<String> listaInformacion;
+    ArrayList<Usuarios> listaUsuarios;
     Conectar conectar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_lista);
+        setContentView(R.layout.activity_lista_ordenada);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        setTitle("Ver usuarios");
-        lista = (ListView) findViewById(R.id.lista);
-        mostrar();
-        ArrayAdapter<String> aa = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listausuarios);
-        lista.setAdapter(aa);
-        lista.setOnItemClickListener(this);
+
+        listView = findViewById(R.id.listViewOrdenada);
+        conectar = new Conectar(this, Variables.NOMBRE_DB, null, 1);
+
+        consultarListaUsuarios();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listaInformacion);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
     }
 
-    private void mostrar() {
-        conectar = new Conectar(this, Variables.NOMBRE_DB, null, 1);
-        SQLiteDatabase bd = conectar.getReadableDatabase();
+    private void consultarListaUsuarios() {
+        SQLiteDatabase db = conectar.getReadableDatabase();
         Usuarios usuario = null;
-        datosusuario = new ArrayList<Usuarios>();
-        Cursor cursor = bd.rawQuery("SELECT * FROM "+ Variables.NOMBRE_TABLA, null);
-        while(cursor.moveToNext()){
+        listaUsuarios = new ArrayList<>();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Variables.NOMBRE_TABLA + " ORDER BY " + Variables.CAMPO_NOMBRE, null);
+
+        while (cursor.moveToNext()) {
             usuario = new Usuarios();
             usuario.setId(cursor.getInt(0));
             usuario.setNombre(cursor.getString(1));
@@ -58,26 +61,26 @@ public class ListaActivity extends AppCompatActivity implements AdapterView.OnIt
             usuario.setSexo(cursor.getString(5));
             usuario.setFechaNacimiento(cursor.getString(6));
             usuario.setEstatura(cursor.getFloat(7));
-            datosusuario.add(usuario);
+            listaUsuarios.add(usuario);
         }
-        agregaralista();
-        bd.close();
+        cursor.close();
+        obtenerLista();
     }
 
-    private void agregaralista() {
-        listausuarios = new ArrayList<String>();
-        for(int i = 0; i<datosusuario.size();i++){
-            listausuarios.add(datosusuario.get(i).getId()+ " . "+datosusuario.get(i).getNombre());
+    private void obtenerLista() {
+        listaInformacion = new ArrayList<>();
+        for (Usuarios usuario : listaUsuarios) {
+            listaInformacion.add(usuario.getNombre() + " " + usuario.getPrimerApellido());
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Usuarios usuario = datosusuario.get(position);
-        Intent ii = new Intent(this, DetalleActivity.class);
-        Bundle b = new Bundle();
-        b.putSerializable("usuario", usuario);
-        ii.putExtras(b);
-        startActivity(ii);
+        Usuarios usuario = listaUsuarios.get(position);
+        Intent intent = new Intent(ListaOrdenadaActivity.this, DetalleActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("usuario", usuario);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }
