@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- EditText para ingresar el valor a convertir -->
+    <EditText
+        android:id="@+id/editTextValor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Valor a convertir"
+        android:inputType="numberDecimal"
+        android:textSize="18sp"/>
+
+    <!-- TextView para moneda origen -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seleccione moneda origen"
+        android:textSize="16sp"
+        android:paddingTop="16dp"/>
+
+    <!-- Spinner para la moneda de origen -->
+    <Spinner
+        android:id="@+id/spinnerMonedaOrigen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- TextView para mostrar el nombre de la moneda origen -->
+    <TextView
+        android:id="@+id/textViewNombreMonedaOrigen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre moneda origen"
+        android:textSize="16sp"
+        android:paddingTop="10dp"/>
+
+    <!-- TextView para moneda destino -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seleccione moneda destino"
+        android:textSize="16sp"
+        android:paddingTop="16dp"/>
+
+    <!-- Spinner para la moneda de destino -->
+    <Spinner
+        android:id="@+id/spinnerMonedaDestino"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- TextView para mostrar el nombre de la moneda destino -->
+    <TextView
+        android:id="@+id/textViewNombreMonedaDestino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre moneda destino"
+        android:textSize="16sp"
+        android:paddingTop="10dp"/>
+
+    <!-- Botón de conversión -->
+    <Button
+        android:id="@+id/btnConvertir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Convertir"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"/>
+
+    <!-- TextView para mostrar el resultado -->
+    <TextView
+        android:id="@+id/textViewResultado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resultado"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="16dp"/>
+</LinearLayout>
